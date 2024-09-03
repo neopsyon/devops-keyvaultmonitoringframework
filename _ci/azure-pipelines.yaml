@@ -1,0 +1,24 @@
+name: $(date:yyyy.M.d)-$(Build.SourceBranchName)-$(date:HHmm)
+
+resources:
+  repositories:
+  - repository: ccoeSources
+    type: git
+    name: Azure/ccoeSources
+    ref: build-newshit
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - '*'
+  branches:
+    include:
+      - feature/*
+      - hotfix/*
+      - main
+
+stages:
+  - template: pipelines/stages/build.yaml@ccoeSources
+    parameters:
+      test: value
