@@ -1,12 +1,5 @@
 name: $(date:yyyy.M.d)-$(Build.SourceBranchName)-$(date:HHmm)
 
-resources:
-  repositories:
-  - repository: ccoeSources
-    type: git
-    name: Azure/ccoeSources
-    ref: build-newshit
-
 trigger:
   batch: true
   paths:
@@ -17,8 +10,8 @@ trigger:
       - feature/*
       - hotfix/*
       - main
-
+      
 stages:
-  - template: pipelines/stages/build.yaml@ccoeSources
+  - template: /pipelines/stages/build.yaml
     parameters:
-      test: value
+      sourceFolder: /solutions/landingZone

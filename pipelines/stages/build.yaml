@@ -1,0 +1,66 @@
+parameters:
+- name: sourceFolder
+  type: string
+
+- name: sourceFolderContent
+  type: object
+  default: |
+    **\parameters\**
+    **\bicep\**
+    **\scripts\**
+
+- name: sourceCodeBuild
+  type: boolean
+  default: false
+  
+stages:
+  - stage: build
+    displayName: Build
+    jobs:
+      - job: Build
+        pool:
+          vmImage: windows-latest
+        steps:
+        - checkout: self
+          clean: true
+
+        - task: CopyFiles@2
+          displayName: Copy solution files to build directory
+          inputs:
+            SourceFolder: $(Build.SourcesDirectory)/${{ parameters.sourceFolder }}
+            Contents: ${{ parameters.sourceFolderContent }}
+            TargetFolder: $(Build.ArtifactStagingDirectory)/solution/company/current
+
+        - task: CopyFiles@2
+          displayName: Copy bicep files to build directory
+          inputs:
+            SourceFolder: $(Build.SourcesDirectory)/bicep/
+            Contents: |
+              **
+            TargetFolder: $(Build.ArtifactStagingDirectory)/bicep/
+
+        # - task: CopyFiles@2
+        #   displayName: Copy scripts to build directory
+        #   inputs:
+        #     SourceFolder: $(Build.SourcesDirectory)/Pipelines/scripts
+        #     Contents: |
+        #       **
+        #     TargetFolder: $(Build.ArtifactStagingDirectory)/scripts
+
+        - publish: $(Build.ArtifactStagingDirectory)
+          artifact: build
+          displayName: Publish build artifact
+
+        - ${{ if eq(parameters.sourceCodeBuild, 'true') }}:
+          - task: ArchiveFiles@2
+            displayName: Archive source code files
+            inputs:
+              rootFolderOrFile: $(Build.SourcesDirectory)/${{ parameters.sourceFolder }}/src/
+              includeRootFolder: false
+              archiveFile: $(Build.ArtifactStagingDirectory)/source.zip
+
+          - publish: $(Build.ArtifactStagingDirectory)/source.zip
+            artifact: source
+            displayName: Publish source code artifact
+
+

@@ -1,0 +1,17 @@
+name: $(date:yyyy.M.d)-$(Build.SourceBranchName)-$(date:HHmm)
+
+trigger:
+  batch: true
+  paths:
+    include:
+      - '*'
+  branches:
+    include:
+      - feature/*
+      - hotfix/*
+      - main
+      
+stages:
+  - template: /pipelines/stages/build.yaml
+    parameters:
+      sourceFolder: 
