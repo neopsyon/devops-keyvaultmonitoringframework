@@ -1,0 +1,62 @@
+parameters:
+  - name: connectedServiceName
+    type: string
+
+  - name: subscriptionId
+    type: string
+
+  - name: environment
+    type: string
+
+  - name: location
+    type: string
+  
+  - name: dependsOn
+    type: string
+
+  - name: condition
+    type: string
+stages:
+  - stage: ${{ format('deploy_{0}', parameters.environment ) }}
+    dependsOn: ${{ parameters.dependsOn }}
+    condition: ${{ parameters.condition }}
+    variables:
+      - template: /pipelines/variables/deployVariables.yaml
+    pool:
+      vmImage: windows-latest
+    displayName: Deploy ${{ parameters.environment }}
+    jobs:
+      - ${{ each location in split(parameters.location, ', ') }}:
+        - deployment:
+          displayName: ${{ format('{0} - {1}', parameters.environment, location )}}
+          environment: ${{ parameters.environment }}
+          variables:
+            - template: ${{ format('/pipelines/variables/{0}.yaml', replace(location,' ','') ) }}
+            - name: baseParameterFilePath
+              value: $(buildParameterFilePath)/${{ location }}/${{ parameters.environment }}
+            - name: parameterFilePath
+              value: $(baseParameterFilePath)/core-${{ parameters.environment }}-$(locationShort)-rg
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - template: /pipelines/steps/deployPipelineFoundation.yaml
+                    parameters:
+                      connectedServiceName: ${{ parameters.connectedServiceName }}
+                      subscriptionId: ${{ parameters.subscriptionId }}
+                      location: ${{ format('{0}', replace(location,' ','') ) }}
+
+                  - task: AzureCLI@2
+                    inputs:
+                      azureSubscription: ${{ parameters.connectedServiceName }}
+                      scriptType: pscore
+                      scriptLocation: inlineScript
+                      inlineScript: |
+                        az deployment group create `
+                        --name 'deployInfrastructure-${{ parameters.environment }}-$(locationShort)-$(Build.BuildId)' `
+                        --resource-group $(resourceGroupName) `
+                        --template-file "$(solutionBicepPath)/main.bicep" `
+                        --parameters "$(parameterFilePath)/main.bicepparam" `
+                        --verbose
+                    displayName: Deploy Infrastructure in $(locationShort)
+

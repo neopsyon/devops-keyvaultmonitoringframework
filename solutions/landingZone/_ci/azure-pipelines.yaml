@@ -15,3 +15,11 @@ stages:
   - template: /pipelines/stages/build.yaml
     parameters:
       sourceFolder: /solutions/landingZone
+
+  # - template: stages/deploy.yaml
+  #   parameters:
+  #     env: dev
+
+  # - template: stages/deploy.yaml
+  #   parameters:
+  #     env: prd

@@ -29,7 +29,7 @@ stages:
           inputs:
             SourceFolder: $(Build.SourcesDirectory)/${{ parameters.sourceFolder }}
             Contents: ${{ parameters.sourceFolderContent }}
-            TargetFolder: $(Build.ArtifactStagingDirectory)/solution/company/current
+            TargetFolder: $(Build.ArtifactStagingDirectory)/solutions/name/
 
         - task: CopyFiles@2
           displayName: Copy bicep files to build directory
@@ -62,5 +62,3 @@ stages:
           - publish: $(Build.ArtifactStagingDirectory)/source.zip
             artifact: source
             displayName: Publish source code artifact
-
-
