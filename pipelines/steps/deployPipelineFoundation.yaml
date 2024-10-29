@@ -1,0 +1,35 @@
+parameters:
+  - name: connectedServiceName
+    type: string
+
+  - name: subscriptionId
+    type: string
+
+  - name: location
+    type: string
+steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: current
+      targetPath: $(Pipeline.Workspace)
+    displayName: Download Pipeline Artifact
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: ${{ parameters.connectedServiceName }}
+      scriptType: pscore
+      scriptLocation: inlineScript
+      inlineScript: |
+        az deployment sub create `
+        --location ${{ parameters.location }} `
+        --name 'deployResourceGroup-${{ parameters.location }}-$(Build.BuildId)' `
+        --template-file "$(buildBicepPath)/resourceGroup.bicep" `
+        --parameters "$(parameterFilePath)/resourceGroup.bicepparam" `
+        --verbose
+    displayName: Deploy Resource Group in ${{ parameters.location }}
+
+  - template: ./fetchDeploymentOutputs.yaml
+    parameters:
+      connectedServiceName: ${{ parameters.connectedServiceName }}
+      deploymentName: deployResourceGroup-${{ parameters.location }}-$(Build.BuildId)
+      deploymentScope: subscription

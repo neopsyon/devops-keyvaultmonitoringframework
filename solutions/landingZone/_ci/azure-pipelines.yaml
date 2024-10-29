@@ -16,10 +16,27 @@ stages:
     parameters:
       sourceFolder: /solutions/landingZone
 
-  # - template: stages/deploy.yaml
-  #   parameters:
-  #     env: dev
+  - template: stages/deploy.yaml
+    parameters:
+      connectedServiceName: serviceconnection-dev-sub
+      subscriptionId: xxxx
+      environment: development
+      location: west europe
+      dependsOn: build
+      condition: succeeded()
 
-  # - template: stages/deploy.yaml
-  #   parameters:
-  #     env: prd
+  - template: stages/deploy.yaml
+    parameters:
+      connectedServiceName: serviceconnection-prd-sub
+      subscriptionId: xxxx
+      environment: production
+      location: west europe
+      dependsOn: deploy_development
+      condition: >
+        and (
+          succeeded(),
+          or(
+            eq(variables['Build.SourceBranch'], 'refs/heads/master'),
+            eq(variables['Build.SourceBranch'], 'refs/heads/main')
+          )
+        )

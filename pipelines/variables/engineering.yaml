@@ -1,0 +1,5 @@
+variables:
+  appServicePlanResourceId: /subscriptions/0a1e54a3-58b3-40f8-82bd-efd7844068a5/resourceGroups/pnet-core-e-rg/providers/Microsoft.Web/serverfarms/pnet-core-e-asp
+  environmentShort: e
+  logAnalyticsResourceId: /subscriptions/0a1e54a3-58b3-40f8-82bd-efd7844068a5/resourcegroups/oms-d-rg/providers/microsoft.operationalinsights/workspaces/infra-d-oms
+  grafanaUri: https://nasolwe01-e-gra-gbbagbcghccxd0e3.weu.grafana.azure.com

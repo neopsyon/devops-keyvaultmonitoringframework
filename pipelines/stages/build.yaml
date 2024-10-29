@@ -29,7 +29,7 @@ stages:
           inputs:
             SourceFolder: $(Build.SourcesDirectory)/${{ parameters.sourceFolder }}
             Contents: ${{ parameters.sourceFolderContent }}
-            TargetFolder: $(Build.ArtifactStagingDirectory)/solutions/name/
+            TargetFolder: $(Build.ArtifactStagingDirectory)/solutions/current/
 
         - task: CopyFiles@2
           displayName: Copy bicep files to build directory

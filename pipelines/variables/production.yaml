@@ -1,0 +1,4 @@
+variables:
+  appServicePlanResourceId: /subscriptions/b658ffad-30c7-4be6-881c-e3dc1f6520af/resourceGroups/pnet-core-p-rg/providers/Microsoft.Web/serverfarms/pnet-core-p-asp
+  environmentShort: p
+  logAnalyticsResourceId: /subscriptions/0a1e54a3-58b3-40f8-82bd-efd7844068a5/resourcegroups/oms-d-rg/providers/microsoft.operationalinsights/workspaces/infra-d-oms

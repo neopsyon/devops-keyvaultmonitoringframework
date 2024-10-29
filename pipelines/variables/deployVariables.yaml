@@ -1,0 +1,9 @@
+variables:
+  pnetFolder: s/teamAlpha
+  artifactPath: $(Pipeline.Workspace)/build
+  sourceArtifactPath: $(Pipeline.Workspace)/source
+  solutionPath: $(artifactPath)/solutions/current
+  solutionParameterPath: $(solutionPath)/parameters
+  bicepModulePath: $(solutionPath)/bicep
+  solutionScriptPath: $(solutionPath)/scripts
+  scriptsPath: $(artifactPath)/Scripts
